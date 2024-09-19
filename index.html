@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To-DO List</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        header {
+            background-color: #201E43;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+        }
+
+        main {
+            flex: 1;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .form-container {
+            margin-bottom: 20px;
+        }
+
+        .form-container input {
+            padding: 10px;
+            margin-right: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .form-container button {
+            padding: 10px 20px;
+            background-color: #134B70;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .form-container button:hover {
+            background-color: #508C9B;
+        }
+
+        table {
+            width: 100%;
+            max-width: 600px;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        table,
+        th,
+        td {
+            border: 1px solid #ddd;
+        }
+
+        th,
+        td {
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #201E43;
+            color: white;
+        }
+
+        /* Add this to your existing CSS file (styles.css) */
+
+.remove-btn {
+    padding: 5px 10px;
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.remove-btn:hover {
+    background-color: #bb0a1b;
+}
+
+        footer {
+            background-color: #201E43;
+            color: white;
+            text-align: center;
+            padding: 10px;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+    </style>
+</head>
+
+<header>
+    <h1>To-Do List</h1>
+</header>
+
+<body>
+    <!-- task add, deletion in table assigned to people, local storage(using json) -->
+    <main>
+        <div class="form-container">
+            <input type="text" id="task" placeholder="Task">
+            <input type="text" id="person" placeholder="Person Assigned">
+            <button onclick="addTask()">Add Task</button>
+        </div>
+        <table id="taskTable">
+            <thead>
+                <tr>
+                    <th>Task</th>
+                    <th>Person Assigned</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Tasks will be dynamically added here -->
+            </tbody>
+        </table>
+    </main>
+    <script>
+        document.addEventListener('DOMContentLoaded', loadTasks);
+
+        function loadTasks() {
+            const tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+            const taskTableBody = document.querySelector('#taskTable tbody');
+            taskTableBody.innerHTML = '';
+
+            tasks.forEach((task, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+            <td>${task.name}</td>
+            <td>${task.person}</td>
+            <td><button class="remove-btn" onclick="removeTask(${index})">Remove</button></td>
+        `;
+                taskTableBody.appendChild(row);
+            });
+        }
+
+        function addTask() {
+            const taskInput = document.getElementById('task');
+            const personInput = document.getElementById('person');
+            const taskName = taskInput.value;
+            const personName = personInput.value;
+
+            if (taskName && personName) {
+                const tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+                tasks.push({ name: taskName, person: personName });
+                localStorage.setItem('tasks', JSON.stringify(tasks));
+                taskInput.value = '';
+                personInput.value = '';
+                loadTasks();
+            } else {
+                alert('Please enter both task and person assigned.');
+            }
+        }
+
+        function removeTask(index) {
+            const tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+            tasks.splice(index, 1);
+            localStorage.setItem('tasks', JSON.stringify(tasks));
+            loadTasks();
+        }
+    </script>
+</body>
+
+<footer>
+    &copy; 2024 To-Do List App. All rights reserved.
+</footer>
+
+</html>
